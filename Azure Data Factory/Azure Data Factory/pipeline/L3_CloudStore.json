@@ -1,0 +1,125 @@
+{
+	"name": "L3_CloudStore",
+	"properties": {
+		"description": "L3_CloudStore",
+		"activities": [
+			{
+				"name": "LU_Get_L3_Type",
+				"description": "LU_Get_L3_Type",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select distinct L3_switch_type from dbo.tbl_job a join dbo.tbl_trigger b on a.trigger_id = b.trigger_id where b.trigger_name = '@{pipeline().parameters.Trigger}'",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_Azure_Sql_MetaData",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Switching Over L3 Type",
+				"description": "Switching Over L3 Type",
+				"type": "Switch",
+				"dependsOn": [
+					{
+						"activity": "LU_Get_L3_Type",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"on": {
+						"value": "@activity('LU_Get_L3_Type').output.firstRow.L3_switch_type",
+						"type": "Expression"
+					},
+					"cases": [
+						{
+							"value": "Azure",
+							"activities": [
+								{
+									"name": "Execute L4 FileType Pipeline",
+									"description": "Execute L4 FileType Pipeline",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "L4_FileType",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"Trigger": {
+												"value": "@pipeline().parameters.Trigger",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "GCP",
+							"activities": [
+								{
+									"name": "Wait Acitivity 7",
+									"description": "Wait Acitivity",
+									"type": "Wait",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"waitTimeInSeconds": 10
+									}
+								}
+							]
+						},
+						{
+							"value": "AWS",
+							"activities": [
+								{
+									"name": "Wait Acitivity 8",
+									"description": "Wait Acitivity 8",
+									"type": "Wait",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"waitTimeInSeconds": 10
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"Trigger": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-01-12T05:08:50Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

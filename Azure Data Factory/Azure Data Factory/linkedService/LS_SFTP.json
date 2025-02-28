@@ -1,0 +1,24 @@
+{
+	"name": "LS_SFTP",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "LS_SFTP",
+		"annotations": [],
+		"type": "Sftp",
+		"typeProperties": {
+			"host": "20.38.127.4",
+			"port": 22,
+			"skipHostKeyValidation": true,
+			"authenticationType": "Basic",
+			"userName": "sftpadlsgen2.sid",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "Azure Key Vault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "AZURE-SFTP"
+			}
+		}
+	}
+}

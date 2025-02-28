@@ -1,0 +1,12 @@
+{
+	"name": "Azure Key Vault",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "Azure Key Vault",
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://kv-dev-ecom.vault.azure.net/"
+		}
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"name": "Adf-Dev-EcomProject01",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "dbfbd036-96ec-4187-a864-cfc896f1edbf",
+		"tenantId": "bbb22389-dc3c-4d5b-b9c7-068864270748"
+	}
+}
